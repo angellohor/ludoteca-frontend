@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MatPaginator } from '@angular/material/paginator';
 import { Header } from './core/header/header';
 
 @Component({
