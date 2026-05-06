@@ -16,7 +16,8 @@ export class RentalService {
   getRentals(pageable: Pageable, title?: string, customerName?: string, date?: Date): Observable<RentalPage> {
     let dateStr = null;
     if (date != null) {
-      dateStr = date.toISOString().split('T')[0];
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      dateStr = localDate.toISOString().split('T')[0];
     }
 
     return this.http.post<RentalPage>(this.baseUrl, {
@@ -30,7 +31,19 @@ export class RentalService {
   saveRental(rental: Rental): Observable<Rental> {
     const { id } = rental;
     const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
-    return this.http.put<Rental>(url, rental);
+    const rentalDto = { ...rental };
+
+    const formatLocal = (d: Date | string) => {
+      if (!d) return null;
+      const date = new Date(d);
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return localDate.toISOString().split('T')[0];
+    };
+
+    rentalDto.startDate = formatLocal(rentalDto.startDate) as any;
+    rentalDto.endDate = formatLocal(rentalDto.endDate) as any;
+
+    return this.http.put<Rental>(url, rentalDto);
   }
 
   deleteRental(idRental: number): Observable<void> {
