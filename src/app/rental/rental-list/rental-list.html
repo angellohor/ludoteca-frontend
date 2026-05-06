@@ -5,24 +5,20 @@
         <form>
             <mat-form-field>
                 <mat-label>Título del juego</mat-label>
-                <input
-                    type="text"
-                    matInput
-                    placeholder="Título del juego"
-                    [(ngModel)]="filterGame"
-                    name="title"
-                />
+                <mat-select disableRipple [(ngModel)]="filterGame" name="filterGame">
+                    @for (game of games; track game.id) {
+                        <mat-option [value]="game">{{ game.title }}</mat-option>
+                    }
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field>
                 <mat-label>Nombre del cliente</mat-label>
-                <input
-                    type="text"
-                    matInput
-                    placeholder="Nombre del cliente"
-                    [(ngModel)]="filterClient"
-                    name="title"
-                />
+                <mat-select disableRipple [(ngModel)]="filterCustomer" name="filterCustomer">
+                    @for (customer of customers; track customer.id) {
+                        <mat-option [value]="customer">{{ customer.name }}</mat-option>
+                    }
+                </mat-select>
             </mat-form-field>
 
             <mat-form-field>

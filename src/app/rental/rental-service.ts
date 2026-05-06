@@ -13,7 +13,7 @@ export class RentalService {
 
   private baseUrl = 'http://localhost:8080/rental';
 
-  getRentals(pageable: Pageable, title?: string, customerName?: string, date?: Date): Observable<RentalPage> {
+  getRentals(pageable: Pageable, gameId?: number, customerId?: number, date?: Date): Observable<RentalPage> {
     let dateStr = null;
     if (date != null) {
       const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -21,8 +21,8 @@ export class RentalService {
     }
 
     return this.http.post<RentalPage>(this.baseUrl, {
-      gameTitle: title,              
-      customerName: customerName, 
+      gameId: gameId,
+      customerId: customerId,
       date: dateStr,              
       pageable: pageable
     });  

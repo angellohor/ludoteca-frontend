@@ -15,26 +15,25 @@ import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from "@angular
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { FormsModule } from '@angular/forms';
 import { MatInput, MatInputModule } from '@angular/material/input';
+import { Game } from '../../game/model/Game';
+import { Customer } from '../../customer/model/Customer';
+import { MatSelectModule } from '@angular/material/select';
+import { GameService } from '../../game/gameService';
+import { CustomerService } from '../../customer/customer-service';
 
 @Component({
   selector: 'app-rental-list',
-  imports: [MatButtonModule, 
-          MatIconModule, 
-          MatTableModule, 
-          CommonModule, 
-          MatPaginator, 
-          MatDatepickerInput, 
-          MatFormField, 
-          MatLabel, 
-          MatDatepickerToggle, 
-          MatDatepicker,
-          FormsModule,
-          MatNativeDateModule,
-          MatInputModule],
+  imports: [MatSelectModule,
+      MatButtonModule, MatIconModule, MatTableModule, CommonModule, MatPaginator, 
+      MatDatepickerInput, MatFormField, MatLabel, MatDatepickerToggle, MatDatepicker,
+      FormsModule, MatNativeDateModule, MatInputModule],
   templateUrl: './rental-list.html',
   styleUrl: './rental-list.scss',
 })
 export class RentalList {
+
+  games: Game[] = [];
+  customers: Customer[] = [];
 
   pageNumber: number = 0;
   pageSize: number = 5;
@@ -43,13 +42,19 @@ export class RentalList {
   dataSource = new MatTableDataSource<Rental>();
   displayedColumns: string[] = ['id', 'title', 'name','startDate','endDate', 'action']
 
-  filterGame: string;
-  filterClient: string;
+  filterGame: Game;
+  filterCustomer: Customer;
   filterDate: Date;  
 
-  constructor(private rentalService: RentalService, public dialog: MatDialog){}
+  constructor(private rentalService: RentalService,
+    private gameService: GameService,
+    private customerService: CustomerService,
+    public dialog: MatDialog){}
 
   ngOnInit(): void{
+    this.gameService.getGames().subscribe(games => this.games = games);
+    this.customerService.getCustomers().subscribe(customers => this.customers = customers);
+
     this.loadPage();
   }
 
@@ -69,8 +74,10 @@ export class RentalList {
       pageable.pageSize = event.pageSize;
       pageable.pageNumber = event.pageIndex;
     }
-  
-    this.rentalService.getRentals(pageable, this.filterGame, this.filterClient, this.filterDate)
+    const gameId = this.filterGame ? this.filterGame.id : undefined;
+    const customerId = this.filterCustomer ? this.filterCustomer.id : undefined;
+
+    this.rentalService.getRentals(pageable, gameId, customerId, this.filterDate)
       .subscribe((data) => {
         this.dataSource.data = data.content;
         this.pageNumber = data.pageable.pageNumber;
@@ -87,7 +94,7 @@ export class RentalList {
 
   onCleanFilter(): void {
     this.filterGame = null;
-    this.filterClient = null;
+    this.filterCustomer = null;
     this.filterDate = null;
     
     this.onSearch();
