@@ -75,6 +75,14 @@ export class RentalEdit implements OnInit{
   }
   
   onSave(){
+
+    if (this.rental.startDate && this.rental.endDate){
+      const diffDays = (this.rental.endDate.getTime() - this.rental.startDate.getTime()) / (1000 * 3600 * 24);
+      if (diffDays > 14){
+        alert('El periodo de préstamo no puede ser mayor a 14 días');
+        return;
+      }
+    }
     this.rentalService.saveRental(this.rental).subscribe(() => {
       this.dialogRef.close();
     });
