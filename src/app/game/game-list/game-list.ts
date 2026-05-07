@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GameEdit } from '../game-edit/game-edit';
 import { GameService } from '../gameService';
@@ -42,7 +42,8 @@ export class GameList {
   constructor(
     private gameService: GameService,
     private categoryService: CategoryService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
   ){  }
 
   ngOnInit(): void{
@@ -67,7 +68,10 @@ export class GameList {
     
     this.gameService
       .getGames(title, categoryId)
-      .subscribe ((games) => (this.games = games));
+      .subscribe ((games) => {
+        this.games = games
+        this.changeDetectorRef.detectChanges();
+      });
 
   }
 
