@@ -21,12 +21,12 @@ export class AuthorService
 
   saveAuthor(author: Author): Observable<Author>{
     const { id } = author;
-    const url = id ? '${this.baseUrl}/${id}' : this.baseUrl;
+    const url = id ? `${this.baseUrl}/${id}` : this.baseUrl;
     return this.http.put<Author>(url, author);
   }
 
   deleteAuthor(idAuthor: number): Observable<void>{
-    return this.http.delete<void>('${this.baseUrl}/${idAuthor}');
+    return this.http.delete<void>(`${this.baseUrl}/${idAuthor}`);
   }
 
   getAllAuthors(): Observable<Author[]>{
